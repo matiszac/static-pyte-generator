@@ -21,16 +21,16 @@ class TestHTMLNode(unittest.TestCase):
     def test_props_single(self):
         props = props1.copy()
         node = HTMLNode(None, None, None, props)
-        self.assertEqual(node.props_to_html(), 'href="https://github.com" ')
+        self.assertEqual(node.props_to_html(), 'href="https://github.com"')
 
     def test_props_double(self):
         props = props2.copy()
         node = HTMLNode(None, None, None, props)
-        self.assertEqual(node.props_to_html(), 'href="https://github.com" target="_blank" ')
+        self.assertEqual(node.props_to_html(), 'href="https://github.com" target="_blank"')
 
-    def test_print(self):
+    def test_use_not_implemented_method_error(self):
         node = HTMLNode('p', 'This is a paragraph.', ['a', 'a'], {})
-        print(node)
+        self.assertRaises(NotImplementedError, node.to_html)
 
 
 if __name__ == "__main__":

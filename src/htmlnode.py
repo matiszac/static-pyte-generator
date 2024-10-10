@@ -16,10 +16,17 @@ class HTMLNode:
         if len(self.props) == 0:
             return ''
         return reduce(
-            lambda acc, item: acc + f"{item[0]}=\"{item[1]}\" ",
+            lambda acc, item: acc + f'{item[0]}="{item[1]}" ',
             self.props.items(),
             ''
-        )
+        ).rstrip()
+
+    def tag_to_html(self):
+        if self.tag == None:
+            return '', '', ''
+        if self.tag == '':
+            return '', '', ''
+        return f"<{self.tag} ", ">", f"</{self.tag}>"
 
     def __repr__(self):
         return f"HTMLNode( {self.tag} , {self.value} , {self.children} , {self.props} )"
