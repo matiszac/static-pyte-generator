@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode
+from textnode import (TextNode, text_node_to_html_node)
 from htmlnode import LeafNode
 
 
@@ -33,36 +33,36 @@ class TestTextNode(unittest.TestCase):
 
     def test_to_node_invalid_type(self):
         node = TextNode('text', 'xyz', 'googles')
-        self.assertRaises(ValueError, node.text_node_to_html_node)
+        self.assertRaises(ValueError, text_node_to_html_node, node)
 
     def test_to_node_text(self):
         node = TextNode(*t_text[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_text[1])
 
     def test_to_node_bold(self):
         node = TextNode(*t_bold[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_bold[1])
 
     def test_to_node_italic(self):
         node = TextNode(*t_italic[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_italic[1])
 
     def test_to_node_code(self):
         node = TextNode(*t_code[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_code[1])
 
     def test_to_node_link(self):
         node = TextNode(*t_link[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_link[1])
 
     def test_to_node_image(self):
         node = TextNode(*t_image[0])
-        leaf_html = node.text_node_to_html_node().to_html()
+        leaf_html = text_node_to_html_node(node).to_html()
         self.assertEqual(leaf_html, t_image[1])
 
 
