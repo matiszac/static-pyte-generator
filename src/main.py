@@ -8,7 +8,10 @@ from textnode import (
 )
 from inline_markdown import (
     text_to_textnodes,
+)
+from markdown_blocks import (
     markdown_to_blocks,
+    block_to_block_type,
 )
 
 test_case = 'Follow ![some alt text](url/to/img) `this` ****[link](url/to/link) some more text *** for *more info*** hi**  '
@@ -31,7 +34,16 @@ test_text = '''# heading
 
 Some normal text *italic* now some `code` and **bold**.
 
+1. yes
+2. i
+3. can
 
+> i love
+> programming
+
+```
+some code
+```
 
 ## Heading 2
 
@@ -41,7 +53,8 @@ Click [here](https://google.com)'''
 
 def main():
     res = markdown_to_blocks(test_text)
-    print(res)
+    for r in res:
+        print(block_to_block_type(r))
 
 
 

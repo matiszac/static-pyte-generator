@@ -111,15 +111,5 @@ def text_to_textnodes(text):
     return nodes
 
 
-def markdown_to_blocks(markdown):
-    splits = markdown.split('\n\n')
-    if len(splits) == 0:
-        return []
-    blocks = []
-    for block in splits:
-        if block == '':
-            continue
-        blocks.append(block.strip())
-    return blocks
 
 
