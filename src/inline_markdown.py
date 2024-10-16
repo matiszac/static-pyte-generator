@@ -59,11 +59,9 @@ def split_nodes_image(old_nodes):
             continue
         match_length = len(matches)
         for index in range(match_length):
-            print('# > '+text)
             alt, url = matches[index][0], matches[index][1]
             original = f'![{alt}]({url})'
             splits = text.split(original, 1)
-            print(splits)
             if splits[0] != '':
                 new_nodes.append(TextNode(splits[0],text_type_text))
             new_nodes.append(TextNode(alt, text_type_image, url))

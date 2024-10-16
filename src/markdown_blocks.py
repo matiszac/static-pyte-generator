@@ -1,3 +1,10 @@
+from htmlnode import (
+    ParentNode,
+    LeafNode
+)
+from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
+
 block_type_p = 'paragraph'
 block_type_h = 'heading'
 block_type_code = 'code'
@@ -79,3 +86,81 @@ def block_to_block_type(block):
         return block_type_ol
     
     return block_type_p
+
+def markdown_to_html_node(markdown):
+    div = ParentNode('div', [], None)
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        type = block_to_block_type(block)
+        html_node = block_to_html_node(block, type)
+        div.children.append(html_node)
+    return div
+
+def block_to_html_node(block, type):
+    if type == block_type_p:
+        return paragraph_to_html_node(block)
+    if type == block_type_h:
+        return heading_to_html_node(block)
+    if type == block_type_code:
+        return code_to_html_node(block)
+    if type == block_type_quote:
+        return quote_to_html_node(block)
+    if type == block_type_ul:
+        return unordered_list_to_html_node(block)
+    if type == block_type_ol:
+        return ordered_list_to_html_node(block)
+    
+def text_to_children_nodes(text):
+    nodes = text_to_textnodes(text)
+    children = []
+    for node in nodes:
+        html_node = text_node_to_html_node(node)
+        children.append(html_node)
+    return children
+    
+def heading_to_html_node(block):
+    index = 0
+    while block[index] == '#':
+        index += 1
+    tag = f'h{index}'
+    leader = '#'*index+' '
+    text = block.lstrip(leader)
+    children = text_to_children_nodes(text)
+    return ParentNode(tag, children, None)
+
+def code_to_html_node(block):
+    content = block.lstrip('```\n').rstrip('\n```')
+    code = LeafNode('code', content, None)
+    return ParentNode('pre', [code], None)
+
+def quote_to_html_node(block):
+    text = ''
+    lines = block.split('\n')
+    for line in lines:
+        text += line.lstrip('> ')+'\n'
+    text = text.rstrip('\n')
+    children = text_to_children_nodes(text)
+    return ParentNode('blockquote', children, None)
+    
+def unordered_list_to_html_node(block):
+    ul = ParentNode('ul', [], None)
+    lines = block.split('\n')
+    for line in lines:
+        text = line.lstrip('* ')
+        children = text_to_children_nodes(text)
+        ul.children.append(ParentNode('li', children, None))
+    return ul
+
+
+def ordered_list_to_html_node(block):
+    ol = ParentNode('ol', [], None)
+    lines = block.split('\n')
+    for line in lines:
+        text = line.partition('. ')[2]
+        children = text_to_children_nodes(text)
+        ol.children.append(ParentNode('li', children, None))
+    return ol
+        
+def paragraph_to_html_node(block):
+    children = text_to_children_nodes(block)
+    return ParentNode('p', children, None)
