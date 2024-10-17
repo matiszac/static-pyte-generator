@@ -29,8 +29,11 @@ Click [here](https://google.com)'''
 
 def main():
     root = '..' if 'main.py' in os.listdir(os.path.curdir) else '.'
+    public_directory = 'public'
+    content_directory = 'content'
 
-    public_folder_path = os.path.join(root, 'public')
+    public_folder_path = os.path.join(root, public_directory)
+    content_folder_path = os.path.join(root, content_directory)
 
     if os.path.exists(public_folder_path):
         print('public folder detected. deleting public folder and its contents.')
@@ -53,6 +56,47 @@ def main():
                 file_name = file.replace(static_folder_path+'/', '')
                 destination_file_path = os.path.join(public_folder_path, file_name)
                 shutil.copy(file, destination_file_path)
+
+    template_file_path = os.path.join(root, 'template.html')
+    index_md_file_path = os.path.join(content_folder_path, 'index.md')
+    destination_index_path = os.path.join(public_folder_path, 'index.html')
+
+    generate_page(index_md_file_path, template_file_path, destination_index_path)
+
+
+
+
+# ---- main end
+
+def generate_page(source_path, template_path, destination_path):
+    print(f'Generating page from: {source_path} -> to: {destination_path} % using: {template_path}')
+    template_html = get_file_text_content(template_path)
+    index_md_content = get_file_text_content(source_path)
+
+    title = extract_title(index_md_content)
+    index_md_html = markdown_to_html_node(index_md_content).to_html()
+
+    template_html = template_html.replace('{{ Title }}', title).replace('{{ Content }}', index_md_html)
+    with open(destination_path, mode='w', encoding='utf-8') as f:
+        f.write(template_html)
+
+
+def extract_title(markdown):
+    lines = markdown.split('\n')
+    for line in lines:
+        if line.startswith('# '):
+            return line.lstrip('# ').rstrip('\n')
+    raise ValueError('h1 title not found')
+
+def get_file_text_content(file_path):
+    if not os.path.isfile(file_path):
+        raise ValueError('Cannot open path to directory as file')
+    if not os.path.exists(file_path):
+        raise ValueError('File does not exist')
+    file_content = ''
+    with open(file_path, encoding='utf-8') as f:
+            file_content = f.read()
+    return file_content
 
 def get_file_list(path):
     if path == '' or path == None:
