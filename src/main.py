@@ -4,30 +4,6 @@ from pathlib import Path
 from htmlnode import ParentNode, LeafNode
 from markdown_blocks import markdown_to_html_node
 
-test_text = '''# heading
-
-* item 1
-* item 2
-* item 3
-
-Some normal text *italic* now some `code` and **bold**.
-
-1. yes
-2. i
-3. can
-
-> i love
-> programming
-
-```
-some code
-```
-
-## Heading 2
-
-
-Click [here](https://google.com)'''
-
 def main():
     root = '..' if 'main.py' in os.listdir(os.path.curdir) else '.'
     prepare_public_folder(root)
