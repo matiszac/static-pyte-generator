@@ -1,3 +1,4 @@
+import sys
 import shutil
 import os
 from pathlib import Path
@@ -8,18 +9,22 @@ from htmlnode import ParentNode, LeafNode
 from markdown_blocks import markdown_to_html_node, markdown_to_blocks, block_to_block_type, block_to_html_node
 
 def main():
+    base_path = '/'
+    if len(sys.argv) == 2:
+        base_path = sys.argv[1]
+
     root = Path(__file__).resolve().parent.parent
     prepare_public_folder(root)
 
     dir_path_content = root / 'content'
     template_file_path = root / 'template.html'
-    dest_dir_path = root / 'public'
+    dest_dir_path = root / 'docs'
 
-    generate_pages_recursive(dir_path_content, template_file_path, dest_dir_path)
+    generate_pages_recursive(dir_path_content, template_file_path, dest_dir_path, base_path)
 
 # ---- main end
 
-def generate_pages_recursive(dir_path_content: Path, template_path: Path, dest_dir_path: Path):
+def generate_pages_recursive(dir_path_content: Path, template_path: Path, dest_dir_path: Path, base_path):
     files = get_files(dir_path_content)
     md_files = [f for f in files if f.suffix == '.md']
 
@@ -32,7 +37,15 @@ def generate_pages_recursive(dir_path_content: Path, template_path: Path, dest_d
         md_content = md.read_text()
         title = extract_title(md_content)
         html_content = markdown_to_html_node(md_content).to_html() # <--
-        dest_content = template.replace('{{ Title }}', title).replace('{{ Content }}', html_content)
+        dest_content = (
+            template
+            .replace('{{ Title }}', title)
+            .replace('{{ Content }}', html_content)
+            .replace('href="/', f'href="{base_path}')
+            .replace('src="/', f'src="{base_path}')
+        )
+
+
 
         relative_path_str = str(md.relative_to(dir_path_content)).replace('.md', '.html')
         destination_file_path = dest_dir_path / relative_path_str
@@ -60,7 +73,7 @@ def generate_page(source_path, template_path, destination_path):
 
 def prepare_public_folder(root: Path):
 
-    public_folder_path = root / 'public'
+    public_folder_path = root / 'docs'
 
     if public_folder_path.exists():
         print('public folder detected. deleting public folder and its contents.')
