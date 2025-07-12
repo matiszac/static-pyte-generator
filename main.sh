@@ -1,2 +1,2 @@
-python3 src/main.py
-cd public && python3 -m http.server 8888
+uv run src/main.py
+cd public && uv run -m http.server 8888

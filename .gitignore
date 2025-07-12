@@ -2,3 +2,4 @@ public/
 __pycache__/
 temp.py
 .DS_Store
+.venv/

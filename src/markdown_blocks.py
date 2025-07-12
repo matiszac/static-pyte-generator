@@ -49,16 +49,18 @@ def is_code_block(block):
 def is_quote(block):
     lines = block.split('\n')
     for line in lines:
-        if not line.startswith('> '):
+        if not line.startswith('>'):
+            return False
+        if len(line) > 1 and not line.startswith('> '):
             return False
     return True
 
 def is_unordered_list(block):
     lines = block.split('\n')
     for line in lines:
-        if not line.startswith('* '):
-            return False
-    return True
+        if line.startswith('* ') or line.startswith('- '):
+            return True
+    return False
 
 def is_ordered_list(block):
     if not '.' in block:
@@ -137,16 +139,19 @@ def quote_to_html_node(block):
     text = ''
     lines = block.split('\n')
     for line in lines:
-        text += line.lstrip('> ')+'\n'
-    text = text.rstrip('\n')
+        text += line.lstrip('> ')+'<br>'
+    text = text.rstrip('<br>')
     children = text_to_children_nodes(text)
     return ParentNode('blockquote', children, None)
     
 def unordered_list_to_html_node(block):
     ul = ParentNode('ul', [], None)
     lines = block.split('\n')
+    symbol = '* '
+    if lines[0].startswith('-'):
+        symbol = '- '
     for line in lines:
-        text = line.lstrip('* ')
+        text = line.lstrip(symbol)
         children = text_to_children_nodes(text)
         ul.children.append(ParentNode('li', children, None))
     return ul
